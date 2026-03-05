@@ -1,0 +1,9 @@
+namespace PcBuilderBackend.Application.PcCases.Dtos
+{
+    public record CreatePcCaseRequest(
+        string Brand,
+        string Model,
+        string FormFactor,
+        int MaxGpuLengthMm,
+        int MaxCoolerHeightMm);
+}

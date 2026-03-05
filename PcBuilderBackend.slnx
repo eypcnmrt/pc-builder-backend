@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="PcBuilderBackend.Application/PcBuilderBackend.Application.csproj" />
+  <Project Path="PcBuilderBackend.Domain/PcBuilderBackend.Domain.csproj" />
+  <Project Path="PcBuilderBackend.Infrastructure/PcBuilderBackend.Infrastructure.csproj" />
+  <Project Path="PcBuilderBackend.Persistence/PcBuilderBackend.Persistence.csproj" />
+  <Project Path="PcBuilderBackend/PcBuilderBackend.csproj" />
+</Solution>
