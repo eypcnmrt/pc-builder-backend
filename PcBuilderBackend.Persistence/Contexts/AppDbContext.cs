@@ -60,7 +60,6 @@ namespace PcBuilderBackend.Persistence.Contexts
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
                 entity.Property(e => e.Brand).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.Model).HasMaxLength(200).IsRequired();
-                entity.Property(e => e.MemoryType).HasMaxLength(20).IsRequired();
             });
 
             modelBuilder.Entity<Ram>(entity =>

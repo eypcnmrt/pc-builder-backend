@@ -8,7 +8,6 @@ namespace PcBuilderBackend.Domain.Entities
         public string Brand { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
         public string Series { get; set; } = string.Empty;
-        public string Architecture { get; set; } = string.Empty;
         public string Socket { get; set; } = string.Empty;
         public int Cores { get; set; }
         public int Threads { get; set; }

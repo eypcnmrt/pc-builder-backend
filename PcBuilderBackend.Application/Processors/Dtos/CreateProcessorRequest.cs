@@ -4,7 +4,6 @@ namespace PcBuilderBackend.Application.Processors.Dtos
         string Brand,
         string Model,
         string Series,
-        string Architecture,
         string Socket,
         int Cores,
         int Threads,
