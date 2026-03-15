@@ -18,6 +18,7 @@ namespace PcBuilderBackend.Infrastructure
             services.AddScoped<IPcCaseService, PcCaseService>();
             services.AddScoped<ICoolerService, CoolerService>();
             services.AddScoped<ICompatibilityService, CompatibilityService>();
+            services.AddScoped<IBuildService, BuildService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();

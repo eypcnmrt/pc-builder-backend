@@ -12,5 +12,6 @@ namespace PcBuilderBackend.Domain.Entities
         public int SpeedMhz { get; set; }
         public int Modules { get; set; }
         public int LatencyCl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

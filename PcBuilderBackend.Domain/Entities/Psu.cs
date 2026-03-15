@@ -10,5 +10,6 @@ namespace PcBuilderBackend.Domain.Entities
         public int Wattage { get; set; }
         public string EfficiencyRating { get; set; } = string.Empty; // 80+ Bronze/Silver/Gold/Platinum
         public string Modular { get; set; } = string.Empty;          // Full / Semi / Non
+        public string? ImageUrl { get; set; }
     }
 }

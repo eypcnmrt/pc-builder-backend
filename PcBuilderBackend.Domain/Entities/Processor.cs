@@ -19,5 +19,6 @@ namespace PcBuilderBackend.Domain.Entities
         public string MemoryType { get; set; } = string.Empty;
         public bool IntegratedGraphics { get; set; }
         public decimal Price { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

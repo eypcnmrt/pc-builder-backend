@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PcBuilderBackend.Persistence.Contexts;
@@ -11,9 +12,11 @@ using PcBuilderBackend.Persistence.Contexts;
 namespace PcBuilderBackend.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260315100219_AddImageUrlToAllComponents")]
+    partial class AddImageUrlToAllComponents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,114 +24,6 @@ namespace PcBuilderBackend.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("PcBuilderBackend.Domain.Entities.Build", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CoolerId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("GpuId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("MotherboardId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<int?>("PcCaseId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ProcessorId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("PsuId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("RamId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("StorageId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CoolerId");
-
-                    b.HasIndex("GpuId");
-
-                    b.HasIndex("MotherboardId");
-
-                    b.HasIndex("PcCaseId");
-
-                    b.HasIndex("ProcessorId");
-
-                    b.HasIndex("PsuId");
-
-                    b.HasIndex("RamId");
-
-                    b.HasIndex("StorageId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Builds");
-                });
-
-            modelBuilder.Entity("PcBuilderBackend.Domain.Entities.BuildActivity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<int>("BuildId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ComponentType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuildId");
-
-                    b.ToTable("BuildActivities");
-                });
 
             modelBuilder.Entity("PcBuilderBackend.Domain.Entities.Cooler", b =>
                 {
@@ -535,89 +430,6 @@ namespace PcBuilderBackend.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("PcBuilderBackend.Domain.Entities.Build", b =>
-                {
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Cooler", "Cooler")
-                        .WithMany()
-                        .HasForeignKey("CoolerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Gpu", "Gpu")
-                        .WithMany()
-                        .HasForeignKey("GpuId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Motherboard", "Motherboard")
-                        .WithMany()
-                        .HasForeignKey("MotherboardId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.PcCase", "PcCase")
-                        .WithMany()
-                        .HasForeignKey("PcCaseId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Processor", "Processor")
-                        .WithMany()
-                        .HasForeignKey("ProcessorId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Psu", "Psu")
-                        .WithMany()
-                        .HasForeignKey("PsuId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Ram", "Ram")
-                        .WithMany()
-                        .HasForeignKey("RamId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Storage", "Storage")
-                        .WithMany()
-                        .HasForeignKey("StorageId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PcBuilderBackend.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cooler");
-
-                    b.Navigation("Gpu");
-
-                    b.Navigation("Motherboard");
-
-                    b.Navigation("PcCase");
-
-                    b.Navigation("Processor");
-
-                    b.Navigation("Psu");
-
-                    b.Navigation("Ram");
-
-                    b.Navigation("Storage");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PcBuilderBackend.Domain.Entities.BuildActivity", b =>
-                {
-                    b.HasOne("PcBuilderBackend.Domain.Entities.Build", "Build")
-                        .WithMany("Activities")
-                        .HasForeignKey("BuildId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Build");
-                });
-
-            modelBuilder.Entity("PcBuilderBackend.Domain.Entities.Build", b =>
-                {
-                    b.Navigation("Activities");
                 });
 #pragma warning restore 612, 618
         }

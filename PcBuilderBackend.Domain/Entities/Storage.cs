@@ -12,5 +12,6 @@ namespace PcBuilderBackend.Domain.Entities
         public string Interface { get; set; } = string.Empty;  // SATA / PCIe 4.0
         public int ReadSpeedMbs { get; set; }
         public int WriteSpeedMbs { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

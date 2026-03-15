@@ -10,5 +10,6 @@ namespace PcBuilderBackend.Domain.Entities
         public string FormFactor { get; set; } = string.Empty;  // ATX / mATX / ITX
         public int MaxGpuLengthMm { get; set; }
         public int MaxCoolerHeightMm { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }
