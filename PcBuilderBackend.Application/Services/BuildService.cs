@@ -9,6 +9,19 @@ namespace PcBuilderBackend.Application.Services
 {
     public class BuildService : IBuildService
     {
+        private const string CProcessor   = "Processor";
+        private const string CMotherboard = "Motherboard";
+        private const string CGpu         = "Gpu";
+        private const string CRam         = "Ram";
+        private const string CStorage     = "Storage";
+        private const string CPsu         = "Psu";
+        private const string CPcCase      = "PcCase";
+        private const string CCooler      = "Cooler";
+
+        private const string ActionAdded   = "Added";
+        private const string ActionRemoved = "Removed";
+        private const string ActionUpdated = "Updated";
+
         private readonly IUnitOfWork _unitOfWork;
 
         public BuildService(IUnitOfWork unitOfWork)
@@ -102,14 +115,14 @@ namespace PcBuilderBackend.Application.Services
 
                 var activityRepo = _unitOfWork.GetRepository<BuildActivity>();
 
-                await TrackChange(activityRepo, build, "Processor", build.ProcessorId, request.ProcessorId, ct);
-                await TrackChange(activityRepo, build, "Motherboard", build.MotherboardId, request.MotherboardId, ct);
-                await TrackChange(activityRepo, build, "Gpu", build.GpuId, request.GpuId, ct);
-                await TrackChange(activityRepo, build, "Ram", build.RamId, request.RamId, ct);
-                await TrackChange(activityRepo, build, "Storage", build.StorageId, request.StorageId, ct);
-                await TrackChange(activityRepo, build, "Psu", build.PsuId, request.PsuId, ct);
-                await TrackChange(activityRepo, build, "PcCase", build.PcCaseId, request.PcCaseId, ct);
-                await TrackChange(activityRepo, build, "Cooler", build.CoolerId, request.CoolerId, ct);
+                await TrackChange(activityRepo, build, CProcessor,   build.ProcessorId,   request.ProcessorId,   ct);
+                await TrackChange(activityRepo, build, CMotherboard, build.MotherboardId, request.MotherboardId, ct);
+                await TrackChange(activityRepo, build, CGpu,         build.GpuId,         request.GpuId,         ct);
+                await TrackChange(activityRepo, build, CRam,         build.RamId,         request.RamId,         ct);
+                await TrackChange(activityRepo, build, CStorage,     build.StorageId,     request.StorageId,     ct);
+                await TrackChange(activityRepo, build, CPsu,         build.PsuId,         request.PsuId,         ct);
+                await TrackChange(activityRepo, build, CPcCase,      build.PcCaseId,      request.PcCaseId,      ct);
+                await TrackChange(activityRepo, build, CCooler,      build.CoolerId,      request.CoolerId,      ct);
 
                 if (request.Name is not null) build.Name = request.Name;
                 if (request.ProcessorId.HasValue) build.ProcessorId = request.ProcessorId == 0 ? null : request.ProcessorId;
@@ -171,14 +184,8 @@ namespace PcBuilderBackend.Application.Services
 
                 var (items, totalCount) = await repo.GetPagedAsync(query, (page - 1) * pageSize, pageSize, ct);
 
-                return Result<PagedData<BuildActivityResponse>>.Ok(new PagedData<BuildActivityResponse>
-                {
-                    Items = items.Adapt<List<BuildActivityResponse>>(),
-                    TotalCount = totalCount,
-                    PageCount = (int)Math.Ceiling((double)totalCount / pageSize),
-                    Page = page,
-                    PageSize = pageSize
-                });
+                return Result<PagedData<BuildActivityResponse>>.Ok(
+                    PagedData<BuildActivityResponse>.Create(items.Adapt<List<BuildActivityResponse>>(), totalCount, page, pageSize));
             }
             catch (Exception ex)
             {
@@ -218,17 +225,17 @@ namespace PcBuilderBackend.Application.Services
 
             if (oldId is null && actualNewId is not null)
             {
-                action = "Added";
+                action = ActionAdded;
                 description = $"{componentType} eklendi (ID: {actualNewId})";
             }
             else if (oldId is not null && actualNewId is null)
             {
-                action = "Removed";
+                action = ActionRemoved;
                 description = $"{componentType} kaldırıldı (ID: {oldId})";
             }
             else
             {
-                action = "Updated";
+                action = ActionUpdated;
                 description = $"{componentType} güncellendi (ID: {oldId} → {actualNewId})";
             }
 

@@ -27,14 +27,7 @@ namespace PcBuilderBackend.Application.Services
                     query = options.OrderBy.ApplyTo(query, new ODataQuerySettings());
 
                 var (items, totalCount) = await repo.GetPagedAsync(query, (page - 1) * pageSize, pageSize, ct);
-                return Result<PagedData<Psu>>.Ok(new PagedData<Psu>
-                {
-                    Items = items,
-                    TotalCount = totalCount,
-                    PageCount = (int)Math.Ceiling((double)totalCount / pageSize),
-                    Page = page,
-                    PageSize = pageSize
-                });
+                return Result<PagedData<Psu>>.Ok(PagedData<Psu>.Create(items, totalCount, page, pageSize));
             }
             catch (Exception ex) { return Result<PagedData<Psu>>.Error(ex.Message); }
         }

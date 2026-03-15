@@ -31,16 +31,7 @@ namespace PcBuilderBackend.Application.Services
                     query = options.OrderBy.ApplyTo(query, new ODataQuerySettings());
 
                 var (items, totalCount) = await repo.GetPagedAsync(query, (page - 1) * pageSize, pageSize, ct);
-                var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
-
-                return Result<PagedData<Motherboard>>.Ok(new PagedData<Motherboard>
-                {
-                    Items = items,
-                    TotalCount = totalCount,
-                    PageCount = pageCount,
-                    Page = page,
-                    PageSize = pageSize
-                });
+                return Result<PagedData<Motherboard>>.Ok(PagedData<Motherboard>.Create(items, totalCount, page, pageSize));
             }
             catch (Exception ex)
             {
@@ -56,16 +47,7 @@ namespace PcBuilderBackend.Application.Services
                 var query = repo.AsQueryable().Where(m => m.Socket == socket);
 
                 var (items, totalCount) = await repo.GetPagedAsync(query, (page - 1) * pageSize, pageSize, ct);
-                var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
-
-                return Result<PagedData<Motherboard>>.Ok(new PagedData<Motherboard>
-                {
-                    Items = items,
-                    TotalCount = totalCount,
-                    PageCount = pageCount,
-                    Page = page,
-                    PageSize = pageSize
-                });
+                return Result<PagedData<Motherboard>>.Ok(PagedData<Motherboard>.Create(items, totalCount, page, pageSize));
             }
             catch (Exception ex)
             {
