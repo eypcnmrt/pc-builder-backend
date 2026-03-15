@@ -26,6 +26,9 @@ namespace PcBuilderBackend.Persistence.Repositories
         public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default) =>
             _dbSet.FirstOrDefaultAsync(predicate, ct);
 
+        public Task<T?> FirstOrDefaultAsync(IQueryable<T> query, CancellationToken ct = default) =>
+            query.FirstOrDefaultAsync(ct);
+
         public async Task<(List<T> Items, int TotalCount)> GetPagedAsync(IQueryable<T> query, int skip, int take, CancellationToken ct = default)
         {
             var totalCount = await query.CountAsync(ct);

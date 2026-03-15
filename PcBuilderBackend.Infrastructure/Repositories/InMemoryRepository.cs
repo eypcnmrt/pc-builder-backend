@@ -23,6 +23,9 @@ namespace PcBuilderBackend.Infrastructure.Repositories
         public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default) =>
             Task.FromResult(_store.AsQueryable().FirstOrDefault(predicate));
 
+        public Task<T?> FirstOrDefaultAsync(IQueryable<T> query, CancellationToken ct = default) =>
+            Task.FromResult(query.FirstOrDefault());
+
         public Task<(List<T> Items, int TotalCount)> GetPagedAsync(IQueryable<T> query, int skip, int take, CancellationToken ct = default)
         {
             var totalCount = query.Count();

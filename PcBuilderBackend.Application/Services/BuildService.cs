@@ -24,9 +24,7 @@ namespace PcBuilderBackend.Application.Services
                 var query = repo.AsQueryable()
                     .Where(b => b.UserId == userId)
                     .OrderByDescending(b => b.UpdatedAt);
-
-                var (items, _) = await repo.GetPagedAsync(query, 0, 1, ct);
-                var build = items.FirstOrDefault();
+                var build = await repo.FirstOrDefaultAsync(query, ct);
 
                 if (build is null)
                 {
