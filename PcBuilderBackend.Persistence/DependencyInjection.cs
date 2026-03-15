@@ -11,18 +11,11 @@ namespace PcBuilderBackend.Persistence
     {
         public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("'DefaultConnection' connection string is not configured.");
 
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                services.AddDbContext<AppDbContext>(options =>
-                    options.UseInMemoryDatabase("PcBuilderDb"));
-            }
-            else
-            {
-                services.AddDbContext<AppDbContext>(options =>
-                    options.UseNpgsql(connectionString));
-            }
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql(connectionString));
 
             services.AddScoped<IUnitOfWork, EFCoreUnitOfWork>();
             return services;
