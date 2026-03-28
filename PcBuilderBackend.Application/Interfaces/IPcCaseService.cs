@@ -7,10 +7,10 @@ namespace PcBuilderBackend.Application.Interfaces
 {
     public interface IPcCaseService
     {
-        Task<IResult<PagedData<PcCase>>> Listele(ODataQueryOptions<PcCase> options, int page, int pageSize, CancellationToken ct = default);
-        Task<IResult<PcCase>> Getir(int id, CancellationToken ct = default);
-        Task<IResult<int>> Ekle(CreatePcCaseRequest request, CancellationToken ct = default);
-        Task<IResult> Guncelle(int id, UpdatePcCaseRequest request, CancellationToken ct = default);
-        Task<IResult> Sil(int id, CancellationToken ct = default);
+        Task<IResult<PagedData<PcCase>>> List(ODataQueryOptions<PcCase> options, int page, int pageSize, CancellationToken ct = default);
+        Task<IResult<PcCase>> Get(int id, CancellationToken ct = default);
+        Task<IResult<int>> Create(CreatePcCaseRequest request, CancellationToken ct = default);
+        Task<IResult> Update(int id, UpdatePcCaseRequest request, CancellationToken ct = default);
+        Task<IResult> Delete(int id, CancellationToken ct = default);
     }
 }

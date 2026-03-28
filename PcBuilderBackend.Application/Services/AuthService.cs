@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using PcBuilderBackend.Application.Auth.Dtos;
 using PcBuilderBackend.Application.Common;
 using PcBuilderBackend.Application.Interfaces;
@@ -11,15 +12,17 @@ namespace PcBuilderBackend.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenService _tokenService;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, ITokenService tokenService)
+        public AuthService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, ITokenService tokenService, ILogger<AuthService> logger)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
+            _logger = logger;
         }
 
-        public async Task<IResult<AuthResponse>> Kayit(RegisterRequest request, CancellationToken ct = default)
+        public async Task<IResult<AuthResponse>> Register(RegisterRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -46,11 +49,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<AuthResponse>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Register));
+                return Result<AuthResponse>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult<AuthResponse>> Giris(LoginRequest request, CancellationToken ct = default)
+        public async Task<IResult<AuthResponse>> Login(LoginRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -65,7 +69,8 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<AuthResponse>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Login));
+                return Result<AuthResponse>.Error("Bir hata oluştu.");
             }
         }
     }

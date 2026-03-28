@@ -18,10 +18,14 @@ namespace PcBuilderBackend.Controllers
 
         public BuildController(IBuildService service) => _service = service;
 
-        private int GetUserId() =>
-            int.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)
-                ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
-                ?? throw new UnauthorizedAccessException("Kullanıcı kimliği bulunamadı."));
+        private int GetUserId()
+        {
+            var claim = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claim, out var userId))
+                throw new UnauthorizedAccessException("Kullanıcı kimliği bulunamadı.");
+            return userId;
+        }
 
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken) =>

@@ -5,7 +5,7 @@ namespace PcBuilderBackend.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<IResult<AuthResponse>> Kayit(RegisterRequest request, CancellationToken ct = default);
-        Task<IResult<AuthResponse>> Giris(LoginRequest request, CancellationToken ct = default);
+        Task<IResult<AuthResponse>> Register(RegisterRequest request, CancellationToken ct = default);
+        Task<IResult<AuthResponse>> Login(LoginRequest request, CancellationToken ct = default);
     }
 }

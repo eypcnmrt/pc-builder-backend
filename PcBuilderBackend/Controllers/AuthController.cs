@@ -15,11 +15,11 @@ namespace PcBuilderBackend.Controllers
         public AuthController(IAuthService service) => _service = service;
 
         [HttpPost("register")]
-        public async Task<IActionResult> Kayit([FromBody] RegisterRequest request, CancellationToken cancellationToken) =>
-            (await _service.Kayit(request, cancellationToken)).ToJsonResult();
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken) =>
+            (await _service.Register(request, cancellationToken)).ToJsonResult();
 
         [HttpPost("login")]
-        public async Task<IActionResult> Giris([FromBody] LoginRequest request, CancellationToken cancellationToken) =>
-            (await _service.Giris(request, cancellationToken)).ToJsonResult();
+        public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken) =>
+            (await _service.Login(request, cancellationToken)).ToJsonResult();
     }
 }

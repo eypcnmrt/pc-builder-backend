@@ -1,5 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PcBuilderBackend.Application.Common;
 using PcBuilderBackend.Application.Interfaces;
 using PcBuilderBackend.Application.Rams.Dtos;
@@ -11,18 +13,20 @@ namespace PcBuilderBackend.Application.Services
     public class RamService : IRamService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<RamService> _logger;
 
-        public RamService(IUnitOfWork unitOfWork)
+        public RamService(IUnitOfWork unitOfWork, ILogger<RamService> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
-        public async Task<IResult<PagedData<Ram>>> Listele(ODataQueryOptions<Ram> options, int page, int pageSize, CancellationToken ct = default)
+        public async Task<IResult<PagedData<Ram>>> List(ODataQueryOptions<Ram> options, int page, int pageSize, CancellationToken ct = default)
         {
             try
             {
                 var repo = _unitOfWork.GetRepository<Ram>();
-                var query = repo.AsQueryable();
+                var query = repo.AsQueryable().AsNoTracking();
 
                 if (options.Filter != null)
                     query = (IQueryable<Ram>)options.Filter.ApplyTo(query, new ODataQuerySettings());
@@ -35,11 +39,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<PagedData<Ram>>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(List));
+                return Result<PagedData<Ram>>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult<Ram>> Getir(int id, CancellationToken ct = default)
+        public async Task<IResult<Ram>> Get(int id, CancellationToken ct = default)
         {
             var entity = await _unitOfWork.GetRepository<Ram>().GetByIdAsync(id, ct);
             if (entity is null)
@@ -48,7 +53,7 @@ namespace PcBuilderBackend.Application.Services
             return Result<Ram>.Ok(entity);
         }
 
-        public async Task<IResult<int>> Ekle(CreateRamRequest request, CancellationToken ct = default)
+        public async Task<IResult<int>> Create(CreateRamRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -60,11 +65,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<int>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Create));
+                return Result<int>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Guncelle(int id, UpdateRamRequest request, CancellationToken ct = default)
+        public async Task<IResult> Update(int id, UpdateRamRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -80,11 +86,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Update));
+                return Result.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Sil(int id, CancellationToken ct = default)
+        public async Task<IResult> Delete(int id, CancellationToken ct = default)
         {
             try
             {
@@ -99,7 +106,8 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Delete));
+                return Result.Error("Bir hata oluştu.");
             }
         }
     }

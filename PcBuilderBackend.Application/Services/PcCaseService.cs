@@ -1,5 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PcBuilderBackend.Application.Common;
 using PcBuilderBackend.Application.Interfaces;
 using PcBuilderBackend.Application.PcCases.Dtos;
@@ -11,15 +13,20 @@ namespace PcBuilderBackend.Application.Services
     public class PcCaseService : IPcCaseService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<PcCaseService> _logger;
 
-        public PcCaseService(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+        public PcCaseService(IUnitOfWork unitOfWork, ILogger<PcCaseService> logger)
+        {
+            _unitOfWork = unitOfWork;
+            _logger = logger;
+        }
 
-        public async Task<IResult<PagedData<PcCase>>> Listele(ODataQueryOptions<PcCase> options, int page, int pageSize, CancellationToken ct = default)
+        public async Task<IResult<PagedData<PcCase>>> List(ODataQueryOptions<PcCase> options, int page, int pageSize, CancellationToken ct = default)
         {
             try
             {
                 var repo = _unitOfWork.GetRepository<PcCase>();
-                var query = repo.AsQueryable();
+                var query = repo.AsQueryable().AsNoTracking();
 
                 if (options.Filter != null)
                     query = (IQueryable<PcCase>)options.Filter.ApplyTo(query, new ODataQuerySettings());
@@ -29,10 +36,14 @@ namespace PcBuilderBackend.Application.Services
                 var (items, totalCount) = await repo.GetPagedAsync(query, (page - 1) * pageSize, pageSize, ct);
                 return Result<PagedData<PcCase>>.Ok(PagedData<PcCase>.Create(items, totalCount, page, pageSize));
             }
-            catch (Exception ex) { return Result<PagedData<PcCase>>.Error(ex.Message); }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in {Method}", nameof(List));
+                return Result<PagedData<PcCase>>.Error("Bir hata oluştu.");
+            }
         }
 
-        public async Task<IResult<PcCase>> Getir(int id, CancellationToken ct = default)
+        public async Task<IResult<PcCase>> Get(int id, CancellationToken ct = default)
         {
             var entity = await _unitOfWork.GetRepository<PcCase>().GetByIdAsync(id, ct);
             return entity is null
@@ -40,7 +51,7 @@ namespace PcBuilderBackend.Application.Services
                 : Result<PcCase>.Ok(entity);
         }
 
-        public async Task<IResult<int>> Ekle(CreatePcCaseRequest request, CancellationToken ct = default)
+        public async Task<IResult<int>> Create(CreatePcCaseRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -50,10 +61,14 @@ namespace PcBuilderBackend.Application.Services
                 await _unitOfWork.SaveChangesAsync(ct);
                 return Result<int>.Created(entity.Id, "Kasa başarıyla eklendi.");
             }
-            catch (Exception ex) { return Result<int>.Error(ex.Message); }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in {Method}", nameof(Create));
+                return Result<int>.Error("Bir hata oluştu.");
+            }
         }
 
-        public async Task<IResult> Guncelle(int id, UpdatePcCaseRequest request, CancellationToken ct = default)
+        public async Task<IResult> Update(int id, UpdatePcCaseRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -65,10 +80,14 @@ namespace PcBuilderBackend.Application.Services
                 await _unitOfWork.SaveChangesAsync(ct);
                 return Result.Ok("Kasa başarıyla güncellendi.");
             }
-            catch (Exception ex) { return Result.Error(ex.Message); }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in {Method}", nameof(Update));
+                return Result.Error("Bir hata oluştu.");
+            }
         }
 
-        public async Task<IResult> Sil(int id, CancellationToken ct = default)
+        public async Task<IResult> Delete(int id, CancellationToken ct = default)
         {
             try
             {
@@ -79,7 +98,11 @@ namespace PcBuilderBackend.Application.Services
                 await _unitOfWork.SaveChangesAsync(ct);
                 return Result.Ok("Kasa başarıyla silindi.");
             }
-            catch (Exception ex) { return Result.Error(ex.Message); }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in {Method}", nameof(Delete));
+                return Result.Error("Bir hata oluştu.");
+            }
         }
     }
 }

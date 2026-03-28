@@ -1,5 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PcBuilderBackend.Application.Common;
 using PcBuilderBackend.Application.Interfaces;
 using PcBuilderBackend.Application.Processors.Dtos;
@@ -11,18 +13,20 @@ namespace PcBuilderBackend.Application.Services
     public class ProcessorService : IProcessorService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<ProcessorService> _logger;
 
-        public ProcessorService(IUnitOfWork unitOfWork)
+        public ProcessorService(IUnitOfWork unitOfWork, ILogger<ProcessorService> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
-        public async Task<IResult<PagedData<Processor>>> Listele(ODataQueryOptions<Processor> options, int page, int pageSize, CancellationToken ct = default)
+        public async Task<IResult<PagedData<Processor>>> List(ODataQueryOptions<Processor> options, int page, int pageSize, CancellationToken ct = default)
         {
             try
             {
                 var repo = _unitOfWork.GetRepository<Processor>();
-                var query = repo.AsQueryable();
+                var query = repo.AsQueryable().AsNoTracking();
 
                 if (options.Filter != null)
                     query = (IQueryable<Processor>)options.Filter.ApplyTo(query, new ODataQuerySettings());
@@ -35,11 +39,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<PagedData<Processor>>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(List));
+                return Result<PagedData<Processor>>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult<Processor>> Getir(int id, CancellationToken ct = default)
+        public async Task<IResult<Processor>> Get(int id, CancellationToken ct = default)
         {
             var entity = await _unitOfWork.GetRepository<Processor>().GetByIdAsync(id, ct);
             if (entity is null)
@@ -48,7 +53,7 @@ namespace PcBuilderBackend.Application.Services
             return Result<Processor>.Ok(entity);
         }
 
-        public async Task<IResult<int>> Ekle(CreateProcessorRequest request, CancellationToken ct = default)
+        public async Task<IResult<int>> Create(CreateProcessorRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -60,11 +65,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<int>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Create));
+                return Result<int>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Guncelle(int id, UpdateProcessorRequest request, CancellationToken ct = default)
+        public async Task<IResult> Update(int id, UpdateProcessorRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -80,11 +86,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Update));
+                return Result.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Sil(int id, CancellationToken ct = default)
+        public async Task<IResult> Delete(int id, CancellationToken ct = default)
         {
             try
             {
@@ -99,7 +106,8 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Delete));
+                return Result.Error("Bir hata oluştu.");
             }
         }
     }

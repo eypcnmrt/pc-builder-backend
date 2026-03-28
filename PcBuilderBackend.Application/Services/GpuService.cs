@@ -1,5 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PcBuilderBackend.Application.Common;
 using PcBuilderBackend.Application.Gpus.Dtos;
 using PcBuilderBackend.Application.Interfaces;
@@ -11,18 +13,20 @@ namespace PcBuilderBackend.Application.Services
     public class GpuService : IGpuService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<GpuService> _logger;
 
-        public GpuService(IUnitOfWork unitOfWork)
+        public GpuService(IUnitOfWork unitOfWork, ILogger<GpuService> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
-        public async Task<IResult<PagedData<Gpu>>> Listele(ODataQueryOptions<Gpu> options, int page, int pageSize, CancellationToken ct = default)
+        public async Task<IResult<PagedData<Gpu>>> List(ODataQueryOptions<Gpu> options, int page, int pageSize, CancellationToken ct = default)
         {
             try
             {
                 var repo = _unitOfWork.GetRepository<Gpu>();
-                var query = repo.AsQueryable();
+                var query = repo.AsQueryable().AsNoTracking();
 
                 if (options.Filter != null)
                     query = (IQueryable<Gpu>)options.Filter.ApplyTo(query, new ODataQuerySettings());
@@ -35,11 +39,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<PagedData<Gpu>>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(List));
+                return Result<PagedData<Gpu>>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult<Gpu>> Getir(int id, CancellationToken ct = default)
+        public async Task<IResult<Gpu>> Get(int id, CancellationToken ct = default)
         {
             var entity = await _unitOfWork.GetRepository<Gpu>().GetByIdAsync(id, ct);
             if (entity is null)
@@ -48,7 +53,7 @@ namespace PcBuilderBackend.Application.Services
             return Result<Gpu>.Ok(entity);
         }
 
-        public async Task<IResult<int>> Ekle(CreateGpuRequest request, CancellationToken ct = default)
+        public async Task<IResult<int>> Create(CreateGpuRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -60,11 +65,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<int>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Create));
+                return Result<int>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Guncelle(int id, UpdateGpuRequest request, CancellationToken ct = default)
+        public async Task<IResult> Update(int id, UpdateGpuRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -80,11 +86,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Update));
+                return Result.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Sil(int id, CancellationToken ct = default)
+        public async Task<IResult> Delete(int id, CancellationToken ct = default)
         {
             try
             {
@@ -99,7 +106,8 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Delete));
+                return Result.Error("Bir hata oluştu.");
             }
         }
     }

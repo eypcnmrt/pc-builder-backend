@@ -1,5 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PcBuilderBackend.Application.Common;
 using PcBuilderBackend.Application.Interfaces;
 using PcBuilderBackend.Application.Motherboards.Dtos;
@@ -11,18 +13,20 @@ namespace PcBuilderBackend.Application.Services
     public class MotherboardService : IMotherboardService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<MotherboardService> _logger;
 
-        public MotherboardService(IUnitOfWork unitOfWork)
+        public MotherboardService(IUnitOfWork unitOfWork, ILogger<MotherboardService> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
-        public async Task<IResult<PagedData<Motherboard>>> Listele(ODataQueryOptions<Motherboard> options, int page, int pageSize, CancellationToken ct = default)
+        public async Task<IResult<PagedData<Motherboard>>> List(ODataQueryOptions<Motherboard> options, int page, int pageSize, CancellationToken ct = default)
         {
             try
             {
                 var repo = _unitOfWork.GetRepository<Motherboard>();
-                var query = repo.AsQueryable();
+                var query = repo.AsQueryable().AsNoTracking();
 
                 if (options.Filter != null)
                     query = (IQueryable<Motherboard>)options.Filter.ApplyTo(query, new ODataQuerySettings());
@@ -35,11 +39,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<PagedData<Motherboard>>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(List));
+                return Result<PagedData<Motherboard>>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult<PagedData<Motherboard>>> UyumluListele(string socket, int page, int pageSize, CancellationToken ct = default)
+        public async Task<IResult<PagedData<Motherboard>>> ListCompatible(string socket, int page, int pageSize, CancellationToken ct = default)
         {
             try
             {
@@ -51,11 +56,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<PagedData<Motherboard>>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(ListCompatible));
+                return Result<PagedData<Motherboard>>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult<Motherboard>> Getir(int id, CancellationToken ct = default)
+        public async Task<IResult<Motherboard>> Get(int id, CancellationToken ct = default)
         {
             var entity = await _unitOfWork.GetRepository<Motherboard>().GetByIdAsync(id, ct);
             if (entity is null)
@@ -64,7 +70,7 @@ namespace PcBuilderBackend.Application.Services
             return Result<Motherboard>.Ok(entity);
         }
 
-        public async Task<IResult<int>> Ekle(CreateMotherboardRequest request, CancellationToken ct = default)
+        public async Task<IResult<int>> Create(CreateMotherboardRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -76,11 +82,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<int>.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Create));
+                return Result<int>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Guncelle(int id, UpdateMotherboardRequest request, CancellationToken ct = default)
+        public async Task<IResult> Update(int id, UpdateMotherboardRequest request, CancellationToken ct = default)
         {
             try
             {
@@ -96,11 +103,12 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Update));
+                return Result.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult> Sil(int id, CancellationToken ct = default)
+        public async Task<IResult> Delete(int id, CancellationToken ct = default)
         {
             try
             {
@@ -115,7 +123,8 @@ namespace PcBuilderBackend.Application.Services
             }
             catch (Exception ex)
             {
-                return Result.Error(ex.Message);
+                _logger.LogError(ex, "Error in {Method}", nameof(Delete));
+                return Result.Error("Bir hata oluştu.");
             }
         }
     }

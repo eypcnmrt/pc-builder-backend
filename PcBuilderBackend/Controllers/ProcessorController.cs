@@ -23,7 +23,7 @@ namespace PcBuilderBackend.Controllers
         }
 
         [HttpGet("/Processor/OData")]
-        public async Task<IActionResult> Listele(
+        public async Task<IActionResult> List(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery(Name = "$filter")] string? odataFilter = null,
@@ -35,23 +35,23 @@ namespace PcBuilderBackend.Controllers
         {
             var context = new ODataQueryContext(_edmModel, typeof(Processor), null);
             var options = new ODataQueryOptions<Processor>(context, HttpContext.Request);
-            return (await _service.Listele(options, page, pageSize, cancellationToken)).ToJsonResult();
+            return (await _service.List(options, page, pageSize, cancellationToken)).ToJsonResult();
         }
 
         [HttpGet("/Processor/{id:int}")]
-        public async Task<IActionResult> Getir(int id, CancellationToken cancellationToken) =>
-            (await _service.Getir(id, cancellationToken)).ToJsonResult();
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken) =>
+            (await _service.Get(id, cancellationToken)).ToJsonResult();
 
         [HttpPost("/Processor")]
-        public async Task<IActionResult> Ekle([FromBody] CreateProcessorRequest request, CancellationToken cancellationToken) =>
-            (await _service.Ekle(request, cancellationToken)).ToJsonResult();
+        public async Task<IActionResult> Create([FromBody] CreateProcessorRequest request, CancellationToken cancellationToken) =>
+            (await _service.Create(request, cancellationToken)).ToJsonResult();
 
         [HttpPut("/Processor/{id:int}")]
-        public async Task<IActionResult> Guncelle(int id, [FromBody] UpdateProcessorRequest request, CancellationToken cancellationToken) =>
-            (await _service.Guncelle(id, request, cancellationToken)).ToJsonResult();
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateProcessorRequest request, CancellationToken cancellationToken) =>
+            (await _service.Update(id, request, cancellationToken)).ToJsonResult();
 
         [HttpDelete("/Processor/{id:int}")]
-        public async Task<IActionResult> Sil(int id, CancellationToken cancellationToken) =>
-            (await _service.Sil(id, cancellationToken)).ToJsonResult();
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken) =>
+            (await _service.Delete(id, cancellationToken)).ToJsonResult();
     }
 }
