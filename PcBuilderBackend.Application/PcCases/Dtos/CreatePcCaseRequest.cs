@@ -5,5 +5,6 @@ namespace PcBuilderBackend.Application.PcCases.Dtos
         string Model,
         string FormFactor,
         int MaxGpuLengthMm,
-        int MaxCoolerHeightMm);
+        int MaxCoolerHeightMm,
+        decimal Price);
 }

@@ -9,5 +9,9 @@ namespace PcBuilderBackend.Application.Builds.Dtos
         public string Action { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+
+        // Frontend-friendly aliases
+        public DateTime Timestamp => CreatedAt;
+        public string Detail => Description;
     }
 }

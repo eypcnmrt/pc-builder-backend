@@ -12,6 +12,7 @@ namespace PcBuilderBackend.Domain.Entities
         public string CompatibleSockets { get; set; } = string.Empty;  // "LGA1700,AM5,AM4"
         public int? HeightMm { get; set; }                             // Hava soğutucusu yüksekliği
         public int? RadiatorSizeMm { get; set; }                       // Sıvı soğutucusu radyatör boyutu
+        public decimal Price { get; set; }
         public string? ImageUrl { get; set; }
     }
 }

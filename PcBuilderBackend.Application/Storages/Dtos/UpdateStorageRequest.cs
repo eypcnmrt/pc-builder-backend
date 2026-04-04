@@ -7,5 +7,6 @@ namespace PcBuilderBackend.Application.Storages.Dtos
         int CapacityGb,
         string Interface,
         int ReadSpeedMbs,
-        int WriteSpeedMbs);
+        int WriteSpeedMbs,
+        decimal Price);
 }

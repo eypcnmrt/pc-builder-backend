@@ -7,5 +7,6 @@ namespace PcBuilderBackend.Application.Coolers.Dtos
         int TdpW,
         string CompatibleSockets,
         int? HeightMm,
-        int? RadiatorSizeMm);
+        int? RadiatorSizeMm,
+        decimal Price);
 }

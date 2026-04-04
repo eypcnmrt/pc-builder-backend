@@ -8,5 +8,6 @@ namespace PcBuilderBackend.Application.Motherboards.Dtos
         string FormFactor,
         int MaxRamGb,
         int RamSlots,
-        string SupportedRamType);
+        string SupportedRamType,
+        decimal Price);
 }

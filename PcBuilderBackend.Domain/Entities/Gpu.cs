@@ -11,6 +11,9 @@ namespace PcBuilderBackend.Domain.Entities
         public int BoostClock { get; set; }
         public int Tdp { get; set; }
         public int LengthMm { get; set; }
+        public string MemoryType { get; set; } = string.Empty;
+        public int CoreClock { get; set; }
+        public decimal Price { get; set; }
         public string? ImageUrl { get; set; }
     }
 }

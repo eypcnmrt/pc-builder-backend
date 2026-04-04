@@ -7,5 +7,6 @@ namespace PcBuilderBackend.Application.Rams.Dtos
         string Type,
         int SpeedMhz,
         int Modules,
-        int LatencyCl);
+        int LatencyCl,
+        decimal Price);
 }

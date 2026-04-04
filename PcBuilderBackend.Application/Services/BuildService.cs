@@ -21,7 +21,7 @@ namespace PcBuilderBackend.Application.Services
             _logger = logger;
         }
 
-        public async Task<IResult<Build>> GetCurrent(int userId, CancellationToken ct = default)
+        public async Task<IResult<BuildResponse>> GetCurrent(int userId, CancellationToken ct = default)
         {
             try
             {
@@ -46,16 +46,16 @@ namespace PcBuilderBackend.Application.Services
                 }
 
                 await PopulateComponents(build, ct);
-                return Result<Build>.Ok(build);
+                return Result<BuildResponse>.Ok(BuildResponse.FromEntity(build));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {Method}", nameof(GetCurrent));
-                return Result<Build>.Error("Bir hata oluştu.");
+                return Result<BuildResponse>.Error("Bir hata oluştu.");
             }
         }
 
-        public async Task<IResult<Build>> GetById(int id, int userId, CancellationToken ct = default)
+        public async Task<IResult<BuildResponse>> GetById(int id, int userId, CancellationToken ct = default)
         {
             try
             {
@@ -63,15 +63,15 @@ namespace PcBuilderBackend.Application.Services
                     .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId, ct);
 
                 if (build is null)
-                    return Result<Build>.NotFound($"Build {id} bulunamadı.");
+                    return Result<BuildResponse>.NotFound($"Build {id} bulunamadı.");
 
                 await PopulateComponents(build, ct);
-                return Result<Build>.Ok(build);
+                return Result<BuildResponse>.Ok(BuildResponse.FromEntity(build));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {Method}", nameof(GetById));
-                return Result<Build>.Error("Bir hata oluştu.");
+                return Result<BuildResponse>.Error("Bir hata oluştu.");
             }
         }
 
@@ -99,7 +99,7 @@ namespace PcBuilderBackend.Application.Services
             }
         }
 
-        public async Task<IResult<Build>> Update(int id, UpdateBuildRequest request, int userId, CancellationToken ct = default)
+        public async Task<IResult<BuildResponse>> Update(int id, UpdateBuildRequest request, int userId, CancellationToken ct = default)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace PcBuilderBackend.Application.Services
                 var build = await repo.FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId, ct);
 
                 if (build is null)
-                    return Result<Build>.NotFound($"Build {id} bulunamadı.");
+                    return Result<BuildResponse>.NotFound($"Build {id} bulunamadı.");
 
                 var activityRepo = _unitOfWork.GetRepository<BuildActivity>();
 
@@ -135,12 +135,12 @@ namespace PcBuilderBackend.Application.Services
                 await _unitOfWork.SaveChangesAsync(ct);
 
                 await PopulateComponents(build, ct);
-                return Result<Build>.Ok(build);
+                return Result<BuildResponse>.Ok(BuildResponse.FromEntity(build));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {Method}", nameof(Update));
-                return Result<Build>.Error("Bir hata oluştu.");
+                return Result<BuildResponse>.Error("Bir hata oluştu.");
             }
         }
 

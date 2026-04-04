@@ -5,5 +5,6 @@ namespace PcBuilderBackend.Application.Psus.Dtos
         string Model,
         int Wattage,
         string EfficiencyRating,
-        string Modular);
+        string Modular,
+        decimal Price);
 }

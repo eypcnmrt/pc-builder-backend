@@ -13,6 +13,7 @@ namespace PcBuilderBackend.Domain.Entities
         public int MaxRamGb { get; set; }
         public int RamSlots { get; set; }
         public string SupportedRamType { get; set; } = string.Empty;   // DDR4 / DDR5
+        public decimal Price { get; set; }
         public string? ImageUrl { get; set; }
     }
 }
